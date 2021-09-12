@@ -70,6 +70,13 @@ module afu
    // for different purposes depending on the response type.
    t_ccip_c0_ReqMmioHdr mmio_hdr;
    assign mmio_hdr = t_ccip_c0_ReqMmioHdr'(rx.c0.hdr);
+   
+   
+   // Instantiate a fifo
+   logic fifo_enable;
+   assign fifo_enable = rx.c0.mmioWrValid | rx.c0.mmioRdValid;
+   
+   fifo data_fifo(.clk(clk), .rst_n(~rst), .en(fifo_enable), .d(rx.c0.data), .q(tx.c0.data));
 
    // =============================================================//   
    // MMIO write code
@@ -92,6 +99,8 @@ module afu
                   case (mmio_hdr.address)
                     16'h0020: user_reg <= rx.c0.data[63:0];
                   endcase
+				  
+				  // Adding logic for fifo
                end
           end
      end

@@ -14,4 +14,25 @@ module fifo
   output [BITS-1:0] q
   );
   // your RTL code here
+  
+  localparam size = DEPTH * BITS;
+  
+  logic [ size-1 :0] data;
+  
+  assign q = data[(size - 1) -: BITS];
+  
+  always@(posedge clk, negedge rst_n)
+	begin
+		if(~rst_n)
+			begin
+				data <= 'b0;
+			end
+		else
+			begin
+				if(en)
+					begin
+						data <= (data << BITS) + d;
+					end
+			end
+	end
 endmodule // fifo
