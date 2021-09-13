@@ -136,45 +136,45 @@ module afu
 
 		  // Check the requested read address of the read request and provide the data 
 		  // from the resource mapped to that address.
-                  case (mmio_hdr.address)
-		    
-		    // =============================================================
-		    // IMPORTANT: Every AFU must provide the following control status registers 
-		    // mapped to these specific addresses.
-		    // =============================================================   
-		    
-                    // AFU header
-                    16'h0000: tx.c2.data <= {
-					     4'b0001, // Feature type = AFU
-					     8'b0,    // reserved
-					     4'b0,    // afu minor revision = 0
-					     7'b0,    // reserved
-					     1'b1,    // end of DFH list = 1
-					     24'b0,   // next DFH offset = 0
-					     4'b0,    // afu major revision = 0
-					     12'b0    // feature ID = 0
-					     };
-
-                    // AFU_ID_L
-                    16'h0002: tx.c2.data <= afu_id[63:0];
-
-                    // AFU_ID_H
-                    16'h0004: tx.c2.data <= afu_id[127:64];
-
-                    // DFH_RSVD0 and DFH_RSVD1
-                    16'h0006: tx.c2.data <= 64'h0;
-                    16'h0008: tx.c2.data <= 64'h0;
-		    
-		    // =============================================================   
-		    // Define user memory-mapped resources here
-		    // =============================================================   
-		    
-                    // Provide the 64-bit data from the user register mapped to h0020.
-                    16'h0020: tx.c2.data <= user_reg;
-
-		    // If the processor requests an address that is unused, return 0.
-                    default:  tx.c2.data <= 64'h0;
-                  endcase
+//                  case (mmio_hdr.address)
+//		    
+//		    // =============================================================
+//		    // IMPORTANT: Every AFU must provide the following control status registers 
+//		    // mapped to these specific addresses.
+//		    // =============================================================   
+//		    
+//                    // AFU header
+//                    16'h0000: tx.c2.data <= {
+//					     4'b0001, // Feature type = AFU
+//					     8'b0,    // reserved
+//					     4'b0,    // afu minor revision = 0
+//					     7'b0,    // reserved
+//					     1'b1,    // end of DFH list = 1
+//					     24'b0,   // next DFH offset = 0
+//					     4'b0,    // afu major revision = 0
+//					     12'b0    // feature ID = 0
+//					     };
+//
+//                    // AFU_ID_L
+//                    16'h0002: tx.c2.data <= afu_id[63:0];
+//
+//                    // AFU_ID_H
+//                    16'h0004: tx.c2.data <= afu_id[127:64];
+//
+//                    // DFH_RSVD0 and DFH_RSVD1
+//                    16'h0006: tx.c2.data <= 64'h0;
+//                    16'h0008: tx.c2.data <= 64'h0;
+//		    
+//		    // =============================================================   
+//		    // Define user memory-mapped resources here
+//		    // =============================================================   
+//		    
+//                    // Provide the 64-bit data from the user register mapped to h0020.
+//                    16'h0020: tx.c2.data <= user_reg;
+//
+//		    // If the processor requests an address that is unused, return 0.
+//                    default:  tx.c2.data <= 64'h0;
+//                  endcase
                end
           end
      end
