@@ -74,68 +74,72 @@ module afu
    
    // Instantiate a fifo
    logic fifo_enable;
+   //logic [63:0] fifo_input;
+   //logic [63:0] fifo_output;
    assign fifo_enable = rx.c0.mmioWrValid | rx.c0.mmioRdValid;
    
    fifo data_fifo(.clk(clk), .rst_n(~rst), .en(fifo_enable), .d(rx.c0.data), .q(tx.c2.data));
+   //fifo data_fifo(.clk(clk), .rst_n(~rst), .en(fifo_enable), .d(fifo_input), .q(fifo_output));
 
-   // =============================================================//   
-   // MMIO write code
-   // =============================================================// 		    
-   always_ff @(posedge clk or posedge rst)
-     begin 
-        if (rst)
-          begin 
-	     // Asnchronous reset for the memory-mapped register.
-	     user_reg <= '0;
-          end
-        else
-          begin
-             // Check to see if there is a valid write being received from the processor.
-             if (rx.c0.mmioWrValid == 1)
-               begin
-		  // Check the address of the write request. If it maches the address of the
-		  // memory-mapped register (h0020), then write the received data on channel c0 
-		  // to the register.
-                  case (mmio_hdr.address)
-                    16'h0020: user_reg <= rx.c0.data[63:0];
-                  endcase
-				  
-				  // Adding logic for fifo
-               end
-          end
-     end
+//   // =============================================================//   
+//   // MMIO write code
+//   // =============================================================// 		    
+//   always_ff @(posedge clk or posedge rst)
+//     begin 
+//        if (rst)
+//          begin 
+//	     // Asnchronous reset for the memory-mapped register.
+//	     user_reg <= '0;
+//          end
+//        else
+//          begin
+//             // Check to see if there is a valid write being received from the processor.
+//             if (rx.c0.mmioWrValid == 1)
+//               begin
+//		  // Check the address of the write request. If it maches the address of the
+//		  // memory-mapped register (h0020), then write the received data on channel c0 
+//		  // to the register.
+//                  case (mmio_hdr.address)
+//                    16'h0020: user_reg <= rx.c0.data[63:0];
+//
+//                  endcase
+//				  
+//				  // Adding logic for fifo
+//               end
+//          end
+//     end
 
-   // ============================================================= 		    
-   // MMIO read code
-   // ============================================================= 		    
-   always_ff @(posedge clk or posedge rst) 
-     begin
-        if (rst)
-          begin
-	     // Reset the status registers in the Tx port.
-             tx.c1.hdr 	       <= '0;
-             tx.c1.valid       <= '0;
-             tx.c0.hdr 	       <= '0;
-             tx.c0.valid       <= '0;
-             tx.c2.hdr 	       <= '0;
-             tx.c2.mmioRdValid <= '0;
-          end
-        else
-          begin
-             // Clear read response flag every cycle in case there was a response last cycle.
-             tx.c2.mmioRdValid <= 0;
-
-             // If there is a read request from the processor, handle that request.
-             if (rx.c0.mmioRdValid == 1'b1)
-               begin
-                  // Copy TID, which the host needs to map the response to the request.
-                  tx.c2.hdr.tid <= mmio_hdr.tid;
-
-                  // Inform the processor that the AFU is responding.
-                  tx.c2.mmioRdValid <= 1;
-
-		  // Check the requested read address of the read request and provide the data 
-		  // from the resource mapped to that address.
+//   // ============================================================= 		    
+//   // MMIO read code
+//   // ============================================================= 		    
+//   always_ff @(posedge clk or posedge rst) 
+//    begin
+//        if (rst)
+//          begin
+//	     // Reset the status registers in the Tx port.
+//             tx.c1.hdr 	       <= '0;
+//             tx.c1.valid       <= '0;
+//             tx.c0.hdr 	       <= '0;
+//             tx.c0.valid       <= '0;
+//             tx.c2.hdr 	       <= '0;
+//             tx.c2.mmioRdValid <= '0;
+//          end
+//        else
+//          begin
+//             // Clear read response flag every cycle in case there was a response last cycle.
+//             tx.c2.mmioRdValid <= 0;
+//
+//             // If there is a read request from the processor, handle that request.
+//             if (rx.c0.mmioRdValid == 1'b1)
+//               begin
+//                  // Copy TID, which the host needs to map the response to the request.
+//                  tx.c2.hdr.tid <= mmio_hdr.tid;
+//
+//                  // Inform the processor that the AFU is responding.
+//                  tx.c2.mmioRdValid <= 1;
+//
+//		  // Check the requested read address of the read request and provide the data 
+//		  // from the resource mapped to that address.
 //                  case (mmio_hdr.address)
 //		    
 //		    // =============================================================
@@ -170,12 +174,13 @@ module afu
 //		    // =============================================================   
 //		    
 //                    // Provide the 64-bit data from the user register mapped to h0020.
-//                    16'h0020: tx.c2.data <= user_reg;
+//                    //16'h0020: tx.c2.data <= user_reg;
+//                    16'h0020: tx.c2.data <= fifo_output;
 //
 //		    // If the processor requests an address that is unused, return 0.
 //                    default:  tx.c2.data <= 64'h0;
 //                  endcase
-               end
-          end
-     end
+//               end
+//          end
+//     end
 endmodule
