@@ -76,7 +76,7 @@ module afu
    logic fifo_enable;
    assign fifo_enable = rx.c0.mmioWrValid | rx.c0.mmioRdValid;
    
-   fifo data_fifo(.clk(clk), .rst_n(~rst), .en(fifo_enable), .d(rx.c0.data), .q(tx.c0.data));
+   fifo data_fifo(.clk(clk), .rst_n(~rst), .en(fifo_enable), .d(rx.c0.data), .q(tx.c2.data));
 
    // =============================================================//   
    // MMIO write code
