@@ -61,8 +61,8 @@ module afu
    // within afu_json_info.vh.
    logic [127:0] afu_id = `AFU_ACCEL_UUID;
 
-   //// User register (memory mapped to address h0020) to test MMIO over CCI-P.
-   //logic [63:0]  user_reg;
+   // User register (memory mapped to address h0020) to test MMIO over CCI-P.
+   logic [63:0]  user_reg;
    
    // The Rx c0 header is normally used for responses to reads from the host processor's memory.
    // For MMIO responses (i.e. when c0 mmmioRdValid or mmioWrValid is asserted), we need to 
